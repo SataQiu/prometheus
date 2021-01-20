@@ -537,6 +537,11 @@ func (s *targetScraper) scrape(ctx context.Context, w io.Writer) (string, error)
 		req.Header.Set("User-Agent", userAgentHeader)
 		req.Header.Set("X-Prometheus-Scrape-Timeout-Seconds", fmt.Sprintf("%f", s.timeout.Seconds()))
 
+		// TODO: solve this issue (different nodes have same IP) in a better way
+		if host := s.labels.Get("x_tunnel_proxy_host"); len(host) != 0 {
+			req.Header.Add("X-Tunnel-Proxy-Host", host)
+		}
+
 		s.req = req
 	}
 
